@@ -1,0 +1,16 @@
+{
+  "name": "Untitled GraphQL Schema",
+  "schemaPath": "schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Default GraphQL Endpoint": {
+        "url": "https://api.stage.hawk.so/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL",
+          "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZGY0ZDM1OTI2MWVkMGRkMzdiMmU3M2UiLCJpYXQiOjE1NzYzNDUzODQsImV4cCI6MTU3NjM0NjI4NH0.q5zkx4ZnlBUfwdCbbYl6bHaAQqoUs2eIi2Rgwe7FofA"
+        },
+        "introspect": false
+      }
+    }
+  }
+}

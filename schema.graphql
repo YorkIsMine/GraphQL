@@ -1,0 +1,588 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+"Payment link structure"
+type BillingSession {
+    "Total payment amount in kopecs"
+    amount: Int!
+    "URL to the payment page"
+    paymentURL: String!
+    "Payment status"
+    status: String!
+    "If the payment is successfull"
+    success: Boolean!
+}
+
+type CardInfo {
+    "Card ID"
+    cardId: String!
+    "Card expiration date"
+    expDate: String!
+    "Card number (Pan)"
+    pan: String!
+}
+
+"Information about event per day"
+type DailyEventInfo {
+    "Event occurrence count"
+    count: Int!
+    "Event occurrence date"
+    date: String!
+    "Event hash for grouping"
+    groupHash: String!
+    "Last event occurrence timestamp"
+    timestamp: DateTime!
+}
+
+"Type representing Hawk single Event"
+type Event {
+    "Catcher type"
+    catcherType: String!
+    "Event group hash"
+    groupHash: String!
+    "Event id"
+    id: ID!
+    "Event payload"
+    payload: EventPayload!
+    "Event's repetitions"
+    repetitions(limit: Int = 10): [Repetitions!]
+    "Event occurrence count"
+    totalCount: Int!
+}
+
+"Event backtrace representation"
+type EventBacktraceFrame {
+    "Function arguments extracted from current stack frame"
+    arguments: [String]
+    "Called column"
+    column: Int
+    "Source filepath"
+    file: String
+    "Function name extracted from current stack frame"
+    function: String
+    "Called line"
+    line: Int
+    "Part of source code file near the called line"
+    sourceCode: [SourceCodeLine!]
+}
+
+"Type representing Event payload"
+type EventPayload {
+    "Custom data provided by project users"
+    addons: JSONObject
+    "Event stack array from the latest call to the earliest"
+    backtrace: [EventBacktraceFrame]
+    "Any additional data of Event"
+    context: JSONObject
+    "Additional data about GET request"
+    get: JSONObject
+    "HTTP headers"
+    headers: JSONObject
+    "Event severity level"
+    level: Int
+    "Additional data about POST request"
+    post: JSONObject
+    "Source code version identifier"
+    release: String
+    "Event timestamp"
+    timestamp: DateTime!
+    "Event title"
+    title: String!
+    "Current authenticated user"
+    user: EventUser
+}
+
+"Event user representation"
+type EventUser {
+    id: ID!
+    name: String!
+    photo: String
+    url: String
+}
+
+type Member {
+    "User's email"
+    email: String!
+    "User's id"
+    id: ID
+    "User's image"
+    image: String
+    "True is user has admin permissions"
+    isAdmin: Boolean
+    "True if user invitation should be confirmed"
+    isPending: Boolean
+    "User's name"
+    name: String
+}
+
+"API mutations"
+type Mutation {
+    "Unused field to let extend this type"
+    _: Boolean
+    "Returns JSON data with payment link and initiate card attach procedure"
+    attachCard(language: String): BillingSession!
+    "Change user password"
+    changePassword(
+        #New user password
+        newPassword: String!,
+        #Current user password
+        oldPassword: String!
+    ): Boolean!
+    """
+    Confirm invitation to workspace
+    Returns true if operation is successful
+    """
+    confirmInvitation(
+        #Hash from invitation link
+        inviteHash: String,
+        #Id of the workspace to which the user was invited
+        workspaceId: ID!
+    ): Boolean!
+    "Create project in given workspace"
+    createProject(
+        #Project name
+        name: String!,
+        #Workspace ID
+        workspaceId: ID!
+    ): Project!
+    "Create new workspace"
+    createWorkspace(
+        #New workspace description
+        description: String,
+        #New workspace image
+        image: String,
+        #New workspace name
+        name: String!
+    ): Workspace!
+    """
+    Grant admin permissions
+    Returns true if operation is successful
+    """
+    grantAdmin(
+        #Permissions state (true to grant, false to withdraw)
+        state: Boolean = true,
+        #ID of user to grant permissions
+        userId: ID!,
+        #Workspace ID
+        workspaceId: ID!
+    ): Boolean!
+    """
+    Invite user to workspace
+    Returns true if operation is successful
+    """
+    inviteToWorkspace(
+        #Email of the user to invite
+        userEmail: String!,
+        #id of the workspace to which the user is invited
+        workspaceId: ID!
+    ): Boolean!
+    "Login user with provided email and password"
+    login(
+        #User email
+        email: String!,
+        #User password
+        password: String!
+    ): Tokens!
+    "Initialize single payment"
+    payOnce(input: PayOnceInput!): BillingSession!
+    "Initialize recurrent payment"
+    payWithCard(
+        #Total payment amount in kopecs
+        amount: Int!,
+        #Unique card identifier for recurrent payment. Omit this to pay with unattached card
+        cardId: Int!,
+        #Payment form language
+        language: String,
+        #Workspace id for which the payment will be made
+        workspaceId: String!
+    ): Boolean!
+    "Update user's tokens pair"
+    refreshTokens(
+        #Refresh token for getting new token pair
+        refreshToken: String!
+    ): Tokens!
+    "Remove card"
+    removeCard(cardNumber: String!): Boolean!
+    """
+    Remove member from workspace
+    Returns true if operation is successful
+    """
+    removeMemberFromWorkspace(
+        #Email of user to remove
+        userEmail: String!,
+        #ID of user to remove
+        userId: ID,
+        #Workspace ID
+        workspaceId: ID!
+    ): Boolean!
+    "Reset user's password"
+    resetPassword(
+        #User email
+        email: String!
+    ): Boolean!
+    "Register user with provided email. Returns true if registred"
+    signUp(
+        #Registration email
+        email: String!
+    ): Boolean!
+    "Update project common notification settings"
+    updateCommonNotificationSettings(
+        #Notify
+        notifySettings: NotifyInput!,
+        #Project ID
+        projectId: ID!
+    ): NotifySettings!
+    "Updates user's visit time on project"
+    updateLastProjectVisit(
+        #project ID
+        projectId: ID!
+    ): DateTime!
+    "Update project personal notification settings"
+    updatePersonalNotificationSettings(
+        #Notify
+        notifySettings: NotifyInput!,
+        #Project ID
+        projectId: ID!
+    ): NotifySettings!
+    "Update user's profile"
+    updateProfile(
+        #User email
+        email: String!,
+        #User name
+        name: String!
+    ): Boolean!
+    "Update workspace settings"
+    updateWorkspace(
+        #Workspace description
+        description: String,
+        #What workspace to update
+        id: ID!,
+        #Workspace name
+        name: String!
+    ): Boolean!
+}
+
+"Project notify settings"
+type NotifySettings {
+    "Notify settings"
+    providers: [ProviderSettings!]
+    "Notify action type"
+    receiveType: ReceiveTypes!
+    "Words for INCLUDING action type"
+    words: String
+}
+
+"Workspace tariff plan"
+type Plan {
+    "Events limit for plan"
+    eventsLimit: Int
+    "Lsat charge date"
+    lastChargeDate: DateTime
+    "Monthly charge for plan"
+    monthlyCharge: Int
+    "Plan name"
+    name: String
+    "Subscription date"
+    subscriptionDate: DateTime
+}
+
+"Project representation"
+type Project {
+    "Get project common notification settings"
+    commonNotificationsSettings: NotifySettings!
+    "Project description"
+    description: String
+    "Project domain"
+    domain: String
+    "Project's Event"
+    event(id: ID!): Event
+    "Project events"
+    events(
+        #Maximum number of results
+        limit: Int = 50,
+        #Certain number of documents to skip
+        skip: Int = 0
+    ): [Event!]
+    "Project ID"
+    id: ID!
+    "Project image"
+    image: String
+    "Project name"
+    name: String!
+    "Get project personal notification settings"
+    personalNotificationsSettings: NotifySettings!
+    "Returns recent events grouped by day"
+    recentEvents(
+        #Maximum number of results
+        limit: Int! = 50,
+        #Certain number of documents to skip
+        skip: Int! = 0
+    ): RecentEvents
+    "Project token"
+    token: String!
+    "User who created project"
+    uidAdded: User!
+    "Returns number of unread events"
+    unreadCount: Int!
+    "Project URI"
+    uri: String
+}
+
+"Settings for notifications provider"
+type ProviderSettings {
+    "Notifications enabled?"
+    enabled: Boolean!
+    "Provider name"
+    provider: ProviderTypes!
+    "Provider value"
+    value: String
+}
+
+"API queries"
+type Query {
+    "Get attached cards"
+    cardList: [CardInfo!]!
+    "Healthcheck endpoint"
+    health: String!
+    "Returns authenticated user data"
+    me: User
+    "Returns project info"
+    project(
+        #Project id
+        id: ID!
+    ): Project
+    "Get workspace transactions"
+    transactions(
+        #Workspaces IDs
+        ids: [ID!] = []
+    ): [Transaction!]!
+    """
+    Returns workspace(s) info
+    If ids = [] returns all user's workspaces
+    """
+    workspaces(
+        #Workspace(s) id(s)
+        ids: [ID] = []
+    ): [Workspace]
+}
+
+"Event information per day with these events"
+type RecentEvents {
+    "Information about occurred events per day"
+    dailyInfo: [DailyEventInfo]
+    "Occured events list"
+    events: [Event!]
+}
+
+"""
+Event backtrace representation for repetition
+backtrace for repetition can be different for repetition
+"""
+type RepetitionBacktrace {
+    "Source filepath"
+    file: String
+    "Called line"
+    line: Int
+    "Part of source code file near the called line"
+    sourceCode: [RepetitionSourceCodeLine!]
+}
+
+"Type representing Event payload"
+type RepetitionPayload {
+    "Custom data provided by project users"
+    addons: JSONObject
+    "Event stack array from the latest call to the earliest"
+    backtrace: [RepetitionBacktrace!]
+    "Any additional data of Event"
+    context: JSONObject
+    "Additional data about GET request"
+    get: JSONObject
+    "HTTP headers"
+    headers: JSONObject
+    "Event severity level"
+    level: Int
+    "Additional data about POST request"
+    post: JSONObject
+    "Source code version identifier"
+    release: String
+    "Event timestamp"
+    timestamp: DateTime!
+    "Current authenticated user"
+    user: EventUser
+}
+
+"""
+Source code line representation for repetition
+This type is defined because repetition diff might be empty
+"""
+type RepetitionSourceCodeLine {
+    "Line's content"
+    content: String
+    "Line number"
+    line: Int
+}
+
+"Event's repetitions. Make Event unique by repetition's payload"
+type Repetitions {
+    "Event's hash"
+    groupHash: String!
+    "Standalone repetition ID"
+    id: ID!
+    "Event's payload patch"
+    payload: RepetitionPayload!
+}
+
+"Source code line representation"
+type SourceCodeLine {
+    "Line's content"
+    content: String
+    "Line number"
+    line: Int!
+}
+
+type Subscription {
+    "Sends new events from all user projects"
+    eventOccurred: Event!
+}
+
+"Authentication token"
+type Tokens {
+    "User's access token"
+    accessToken: String!
+    "User's refresh token for getting new token pair"
+    refreshToken: String!
+}
+
+"Transaction object"
+type Transaction {
+    "Transaction amount"
+    amount: Int!
+    "PAN of card by which transaction has been made"
+    cardPan: Int!
+    "Transaction date"
+    date: DateTime!
+    "Transaction type"
+    type: String!
+    "User by whom transaction has been made (income transactions only)"
+    user: User
+    "Workspace for which transaction has been made"
+    workspace: Workspace!
+}
+
+"Represent User type"
+type User {
+    "User's email"
+    email: String
+    "User's id"
+    id: ID!
+    "User's image"
+    image: String
+    "User's name"
+    name: String
+}
+
+"Represent Workspace info"
+type Workspace {
+    "Workspace balance"
+    balance: Int
+    "Workspace description"
+    description: String
+    "Workspace id"
+    id: ID!
+    "Workspace logo image"
+    image: String
+    "Workspace name"
+    name: String
+    "Workspace pending users array"
+    pendingUsers: [Member!]
+    "Workspace tariff plan"
+    plan: Plan
+    "Workspace projects array"
+    projects(
+        #Project(s) id(s)
+        ids: [ID!] = []
+    ): [Project!]
+    "Workspace users array"
+    users: [Member!]
+}
+
+enum CacheControlScope {
+    PRIVATE
+    PUBLIC
+}
+
+"Supported languages for data"
+enum Languages {
+    EN
+    RU
+}
+
+"Supported provider types"
+enum ProviderTypes {
+    EMAIL
+    SLACK
+    TELEGRAM
+}
+
+"What events to receive"
+enum ReceiveTypes {
+    #Receive all events
+    ALL
+    #Receive events that includes words from list
+    INCLUDING
+    #Receive only new events
+    ONLY_NEW
+}
+
+"Languages supported by the Tinkoff"
+enum SupportedBillingLanguages {
+    EN
+    RU
+}
+
+input NotifyInput {
+    "Notify settings"
+    providers: [NotifyProviderSettings!]!
+    "Notify action type"
+    receiveType: ReceiveTypes!
+    "Words for INCLUDING action type"
+    words: String
+}
+
+"Settings for notifications provider"
+input NotifyProviderSettings {
+    "Is provider enabled"
+    enabled: Boolean!
+    "Provider type"
+    provider: ProviderTypes!
+    "Value for provider to send notifications (email or slack webhook)"
+    value: String!
+}
+
+"Input for single payment"
+input PayOnceInput {
+    "Total payment amount in kopecs"
+    amount: Int!
+    "Payment form language"
+    language: SupportedBillingLanguages = RU
+    "Workspace id for which the payment will be made"
+    workspaceId: ID!
+}
+
+
+"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
+scalar DateTime
+
+"The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSONObject
+
+"The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSON
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

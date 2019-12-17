@@ -1,0 +1,16 @@
+mutation GetToken($email: String!, $password: String!){
+    login(email: $email, password: $password){
+        accessToken
+        refreshToken
+    }
+
+}
+
+query getInfo{
+    me{
+        id
+        name
+        email
+    }
+}
+

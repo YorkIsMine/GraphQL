@@ -8,6 +8,8 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
 private val base_url = "https://api.stage.hawk.so/graphql"
+private var accessToken = ""
+private var refreshToken = ""
 
 val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -19,9 +21,7 @@ val apolloClient: ApolloClient = ApolloClient.builder()
     .serverUrl(base_url)
     .build()
 
-fun getToken(email: String, password: String, whatType: String): String{
-    var accessToken = ""
-    var refreshToken = ""
+fun getToken(email: String, password: String){
     apolloClient.mutate(GetTokenMutation.builder()
         .email(email)
         .password(password)
@@ -33,13 +33,21 @@ fun getToken(email: String, password: String, whatType: String): String{
         override fun onResponse(response: Response<GetTokenMutation.Data>) {
             accessToken = response.data()!!.login.accessToken
             refreshToken = response.data()!!.login.refreshToken
+
         }
     })
-    return if (whatType == "A") accessToken
-    else refreshToken
+
 }
 
 fun getApollo(): ApolloClient{
     return apolloClient
+}
+
+fun returnRefresh(): String{
+    return refreshToken
+}
+
+fun returnAccess(): String{
+    return accessToken
 }
 

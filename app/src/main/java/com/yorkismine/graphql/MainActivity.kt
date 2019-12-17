@@ -32,8 +32,9 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Enter all fields!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }else{
-                val token: String = getToken(etLogin.text.toString(), etPassword.text.toString(), "R")
-                intent.putExtra("Token", token)
+                getToken(etLogin.text.toString(), etPassword.text.toString())
+                intent.putExtra("TokenA", returnAccess())
+                intent.putExtra("TokenR", returnRefresh())
                 startActivity(intent)
             }
         }

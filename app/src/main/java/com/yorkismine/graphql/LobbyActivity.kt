@@ -13,35 +13,33 @@ class LobbyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
-        var token: String? = intent.getStringExtra("Token")
+        var tokenA: String = intent.getStringExtra("TokenA")
+        var tokenR: String = intent.getStringExtra("TokenR")
 
         info_btn.setOnClickListener{
-            getApollo().mutate(RefreshTokenMutation.builder().refreshToken(token!!).build())
+            val apollo = getApollo()
+            apollo.mutate(RefreshTokenMutation.builder().refreshToken(tokenR).build())
                 .enqueue(object: ApolloCall.Callback<RefreshTokenMutation.Data>(){
                     override fun onFailure(e: ApolloException) {
                         e.printStackTrace()
                     }
 
                     override fun onResponse(response: Response<RefreshTokenMutation.Data>) {
-                        token = response.data()!!.refreshTokens.refreshToken
-                        getApollo().query(GetInfoQuery.builder().build())
-                            .requestHeaders(RequestHeaders.builder()
-                                .addHeader("Authorization", "Bearer ${response.data()!!.refreshTokens.refreshToken}").build())
-                            .enqueue(object: ApolloCall.Callback<GetInfoQuery.Data>(){
-                                override fun onFailure(e: ApolloException) {
-                                    e.printStackTrace()
-                                }
+                        tokenA = response.data()!!.refreshTokens.accessToken
+                        tokenR = response.data()!!.refreshTokens.refreshToken
+                    }
 
-                                override fun onResponse(response: Response<GetInfoQuery.Data>) {
-                                    val infoText = "id: ${response.data()!!.me!!.id}\n"
-                                    val text2 =
-                                        "name: ${response.data()!!.me!!.name}\n"
-                                    val text3 =
-                                        "email: ${response.data()!!.me!!.email}"
-                                    text.text = infoText
-                                }
+                })
 
-                            })
+            apollo.query(GetInfoQuery.builder().build()).requestHeaders(RequestHeaders.builder()
+                .addHeader("Authorization", "Bearer $tokenA").build())
+                .enqueue(object: ApolloCall.Callback<GetInfoQuery.Data>(){
+                    override fun onFailure(e: ApolloException) {
+                        e.printStackTrace()
+                    }
+
+                    override fun onResponse(response: Response<GetInfoQuery.Data>) {
+                        text.text = response.data()!!.me!!.name
                     }
 
                 })

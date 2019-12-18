@@ -2,11 +2,13 @@ package com.yorkismine.graphql
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.request.RequestHeaders
 import kotlinx.android.synthetic.main.activity_lobby.*
+import kotlin.concurrent.thread
 
 class LobbyActivity : AppCompatActivity() {
 
@@ -25,8 +27,9 @@ class LobbyActivity : AppCompatActivity() {
                     }
 
                     override fun onResponse(response: Response<RefreshTokenMutation.Data>) {
-                        tokenA = response.data()!!.refreshTokens.accessToken
-                        tokenR = response.data()!!.refreshTokens.refreshToken
+                            tokenA = response.data()!!.refreshTokens.accessToken
+                            tokenR = response.data()!!.refreshTokens.refreshToken
+
                     }
 
                 })

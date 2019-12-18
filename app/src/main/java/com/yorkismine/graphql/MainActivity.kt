@@ -17,8 +17,6 @@ import okhttp3.internal.wait
 import okhttp3.logging.HttpLoggingInterceptor
 
 class MainActivity : AppCompatActivity() {
-    private val base_url = "https://api.stage.hawk.so/graphql"
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +32,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Enter all fields!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }else{
-                getToken(etLogin.text.toString(), etPassword.text.toString(), object: FinishCallBack{
+                Extensions.getToken(etLogin.text.toString(), etPassword.text.toString(), object: Extensions.FinishCallBack{
                     override fun finish() {
-                        intent.putExtra("TokenA", returnAccess())
-                        intent.putExtra("TokenR", returnRefresh())
                         startActivity(intent)
                     }
 

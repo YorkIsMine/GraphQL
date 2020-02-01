@@ -1,4 +1,4 @@
-package com.yorkismine.fileloaderapp.view
+package com.yorkismine.fileloaderapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

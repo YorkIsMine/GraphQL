@@ -1,4 +1,4 @@
-package com.yorkismine.fileloaderapp.model
+package com.yorkismine.fileloaderapp
 
 import android.os.Parcel
 import android.os.Parcelable

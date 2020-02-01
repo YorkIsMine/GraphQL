@@ -1,4 +1,4 @@
-package com.yorkismine.fileloaderapp.adapters
+package com.yorkismine.fileloaderapp
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.yorkismine.fileloaderapp.R
-import com.yorkismine.fileloaderapp.model.DownloadedItem
 
 class FileAdapter(private val list: List<DownloadedItem>) : RecyclerView.Adapter<FileAdapter.FileHolder>() {
 
